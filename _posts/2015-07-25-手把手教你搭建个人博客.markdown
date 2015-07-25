@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "手把手教你搭建个人博客"
-date:   2015-04-09 11:23:32
+date:   2015年7月25日 下午4:30
 categories: jekyll update
 ---
 
