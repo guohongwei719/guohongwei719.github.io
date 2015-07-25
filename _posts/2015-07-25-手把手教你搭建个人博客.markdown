@@ -2,10 +2,34 @@
 layout: post
 title:  "手把手教你搭建个人博客"
 date:   2015年7月25日 下午1:16
-下面插入一张图片看看
----
-这里插入三张看看
+
+##这里插入三张看看
 ![image](http://guohongwei719.github.io/images/20150725/1.png)
 ![image](http://guohongwei719.github.io/images/20150725/2.png)
 ![image](http://guohongwei719.github.io/images/20150725/3.png)
-
+![image](http://guohongwei719.github.io/images/20150725/4.png)
+![image](http://guohongwei719.github.io/images/20150725/5.png)
+![image](http://guohongwei719.github.io/images/20150725/6.png)
+![image](http://guohongwei719.github.io/images/20150725/7.png)
+![image](http://guohongwei719.github.io/images/20150725/8.png)
+![image](http://guohongwei719.github.io/images/20150725/9.png)
+![image](http://guohongwei719.github.io/images/20150725/10.png)
+![image](http://guohongwei719.github.io/images/20150725/11.png)
+![image](http://guohongwei719.github.io/images/20150725/12.png)
+![image](http://guohongwei719.github.io/images/20150725/13.png)
+![image](http://guohongwei719.github.io/images/20150725/14.png)
+![image](http://guohongwei719.github.io/images/20150725/15.png)
+![image](http://guohongwei719.github.io/images/20150725/16.png)
+![image](http://guohongwei719.github.io/images/20150725/17.png)
+![image](http://guohongwei719.github.io/images/20150725/18.png)
+![image](http://guohongwei719.github.io/images/20150725/19.png)
+![image](http://guohongwei719.github.io/images/20150725/20.png)
+![image](http://guohongwei719.github.io/images/20150725/21.png)
+![image](http://guohongwei719.github.io/images/20150725/22.png)
+![image](http://guohongwei719.github.io/images/20150725/23.png)
+![image](http://guohongwei719.github.io/images/20150725/24.png)
+![image](http://guohongwei719.github.io/images/20150725/25.png)
+![image](http://guohongwei719.github.io/images/20150725/26.png)
+![image](http://guohongwei719.github.io/images/20150725/27.png)
+![image](http://guohongwei719.github.io/images/20150725/28.png)
+![image](http://guohongwei719.github.io/images/20150725/29.png)
