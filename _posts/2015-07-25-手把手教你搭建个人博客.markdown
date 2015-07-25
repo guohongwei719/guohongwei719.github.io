@@ -112,19 +112,31 @@ categories: jekyll update
 ![image](http://guohongwei719.github.io/images/20150725/24.png)
 
 
-####25. 
+####25. 每次修改过后如果要再浏览器里面看的话都要清理缓存数据，不然还是看不出有变化，这是个坑
 ![image](http://guohongwei719.github.io/images/20150725/25.png)
 
+
+####26. 看到没，刚才改的两个地方已经出来了，就是这么简单
 ![image](http://guohongwei719.github.io/images/20150725/26.png)
 
+
+####27. 前面那么多的准备都是给下面做准备，接下来我们要自己写一篇博客了。markdown的名字一定要注意啊，【日期-文章标题】,如果不对的话可能就显示不出来了，这是个坑。图片放在一个位置。
 ![image](http://guohongwei719.github.io/images/20150725/27.png)
 
+
+####28. 用markdown语法写博客，很容易，这里插展示插入图片的格式，插入图片也一定要注意，不然图片显示不出来，这也是一个坑
 ![image](http://guohongwei719.github.io/images/20150725/28.png)
 
+
+####29. 这就不用说了吧
 ![image](http://guohongwei719.github.io/images/20150725/29.png)
 
 ####30. 第一篇博客就这样诞生，这酸爽
 ![image](http://guohongwei719.github.io/images/20150725/30.png)
 
+###有三个坑吧
+1. 在浏览器里面看的时候要清楚缓存数据；
+2. 建的博客的文件名字，【日期-文章标题】
+3. 插入图片的时候注意写域名地址
 
 ###其实还有些坑，我就不说了，继续介绍下去感觉在侮辱大神计的各位学弟学妹的智商，还是那句话搞不定问大神胡杰。
