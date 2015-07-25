@@ -124,7 +124,7 @@ categories: jekyll update
 ![image](http://guohongwei719.github.io/images/20150725/27.png)
 
 
-####28. 用markdown语法写博客，很容易，这里插展示插入图片的格式，插入图片也一定要注意，不然图片显示不出来，这也是一个坑
+####28. 用markdown语法写博客，很容易，这里插展示插入图片的格式，插入图片也一定要注意，不然图片显示不出来，这也是一个坑。
 ![image](http://guohongwei719.github.io/images/20150725/28.png)
 
 
