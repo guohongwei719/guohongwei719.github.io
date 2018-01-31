@@ -6,9 +6,9 @@ categories: jekyll update
 ---
 
 
-<div align=center>
+<center>
 <img width="150" height="150" src="http://guohongwei719.github.io/images/20180131/QQ20180131-120114.gif"/>
-
+</center>
 
 ### 之前涂老师有让我研究下搭建个人博客的事情，由于当时比较忙，在网上找了几个教程跟着做，但是一直不成功，后来就把这个事情放下了。这几天跟同事讨论了下，找到了一个比较简单实用的方法，非常容易。希望各位学弟学妹们能跟着做一下，肯定会有收获的。（30张图，非wifi慎点）
 
