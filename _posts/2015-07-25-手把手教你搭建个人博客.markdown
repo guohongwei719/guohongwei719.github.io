@@ -47,90 +47,90 @@ categories: jekyll update
 ![image](http://guohongwei719.github.io/images/20150725/8.png)
 
 
-####9. 就是这个网站了[jekyll](http://jekyllthemes.org)，上面有好多不错的模板。
+#### 9. 就是这个网站了[jekyll](http://jekyllthemes.org)，上面有好多不错的模板。
 ![image](http://guohongwei719.github.io/images/20150725/9.png)
 
 
-####10. 我选择的是这个，感觉比较干净整洁，不喜欢花里胡哨的。
+#### 10. 我选择的是这个，感觉比较干净整洁，不喜欢花里胡哨的。
 ![image](http://guohongwei719.github.io/images/20150725/10.png)
 
 
-####11. 不用犹豫，下载，神计的网速一直很赞，十分怀念。
+#### 11. 不用犹豫，下载，神计的网速一直很赞，十分怀念。
 ![image](http://guohongwei719.github.io/images/20150725/11.png)
 
 
-####12. 桌面就有了这个。
+#### 12. 桌面就有了这个。
 ![image](http://guohongwei719.github.io/images/20150725/12.png)
 
 
-####13. 点开看看吧，嗯，好多东西。
+#### 13. 点开看看吧，嗯，好多东西。
 ![image](http://guohongwei719.github.io/images/20150725/13.png)
 
 
-####14. 我们要用这个模板，全部复制放到guohongwei719.github.io里。
+#### 14. 我们要用这个模板，全部复制放到guohongwei719.github.io里。
 ![image](http://guohongwei719.github.io/images/20150725/14.png)
 
 
-####15. guohongwei719.github.io里面就有了这么些东西了。
+#### 15. guohongwei719.github.io里面就有了这么些东西了。
 ![image](http://guohongwei719.github.io/images/20150725/15.png)
 
 
-####16. 加了这么些东西到这个版本库里，我们可以进入这个目录。
+#### 16. 加了这么些东西到这个版本库里，我们可以进入这个目录。
 ![image](http://guohongwei719.github.io/images/20150725/16.png)
 
 
-####17. 看出多了很多文件。
+#### 17. 看出多了很多文件。
 ![image](http://guohongwei719.github.io/images/20150725/17.png)
 
 
-####18. 将这些修改都加到版本库，不懂git的话可能不明白为什么，没事。
+#### 18. 将这些修改都加到版本库，不懂git的话可能不明白为什么，没事。
 ![image](http://guohongwei719.github.io/images/20150725/18.png)
 
 
-####19. 将本地的修改全部推送到远程库上，就是我们放到github上的那个版本库。
+#### 19. 将本地的修改全部推送到远程库上，就是我们放到github上的那个版本库。
 ![image](http://guohongwei719.github.io/images/20150725/19.png)
 
 
-####20. 搞定之后我们再去github上面去瞄一眼，不错，刚才加的那些东西都上来了。
+#### 20. 搞定之后我们再去github上面去瞄一眼，不错，刚才加的那些东西都上来了。
 ![image](http://guohongwei719.github.io/images/20150725/20.png)
 
 
-####21. 模板都上来了，只是没有内容，这个不怕，在浏览器里面敲入你的版本库的名字，我这里是【guohongwei719.github.io】，激动人心的时刻到了，欧耶。
+#### 21. 模板都上来了，只是没有内容，这个不怕，在浏览器里面敲入你的版本库的名字，我这里是【guohongwei719.github.io】，激动人心的时刻到了，欧耶。
 ![image](http://guohongwei719.github.io/images/20150725/21.png)
 
 
-####22. 模板里面有一篇别人的文章，其实我们可以仿照这篇文章来写我们自己的。还是打开本地版本库的目录。发布的文章肯定是放在_posts里面的了，英语很重要啊，看到没，后缀就是markdown。
+#### 22. 模板里面有一篇别人的文章，其实我们可以仿照这篇文章来写我们自己的。还是打开本地版本库的目录。发布的文章肯定是放在_posts里面的了，英语很重要啊，看到没，后缀就是markdown。
 ![image](http://guohongwei719.github.io/images/20150725/22.png)
 
 
-####23. 在本地的版本库里面有个文件就是用来配置的，一眼扫过去就知道是_config.xml，比如title\motto。就知道你不晓得motto的意思，特意查了下，座右铭、格言。
+#### 23. 在本地的版本库里面有个文件就是用来配置的，一眼扫过去就知道是_config.xml，比如title\motto。就知道你不晓得motto的意思，特意查了下，座右铭、格言。
 ![image](http://guohongwei719.github.io/images/20150725/23.png)
 
 
-####24. 修改过后当然还是添加版本库，然后推送到远程库。
+#### 24. 修改过后当然还是添加版本库，然后推送到远程库。
 ![image](http://guohongwei719.github.io/images/20150725/24.png)
 
 
-####25. 每次修改过后如果要再浏览器里面看的话都要清理缓存数据，不然还是看不出有变化，这是个坑。
+#### 25. 每次修改过后如果要再浏览器里面看的话都要清理缓存数据，不然还是看不出有变化，这是个坑。
 ![image](http://guohongwei719.github.io/images/20150725/25.png)
 
 
-####26. 看到没，刚才改的两个地方已经出来了，就是这么简单。
+#### 26. 看到没，刚才改的两个地方已经出来了，就是这么简单。
 ![image](http://guohongwei719.github.io/images/20150725/26.png)
 
 
-####27. 前面那么多的准备都是给下面做准备，接下来我们要自己写一篇博客了。markdown的名字一定要注意啊，【日期-文章标题】,如果不对的话可能就显示不出来了，这是个坑。博客要用的图片放在一个位置。
+#### 27. 前面那么多的准备都是给下面做准备，接下来我们要自己写一篇博客了。markdown的名字一定要注意啊，【日期-文章标题】,如果不对的话可能就显示不出来了，这是个坑。博客要用的图片放在一个位置。
 ![image](http://guohongwei719.github.io/images/20150725/27.png)
 
 
-####28. 用markdown语法写博客，很容易，这里插展示插入图片的格式，插入图片也一定要注意，不然图片显示不出来，这也是一个坑。
+#### 28. 用markdown语法写博客，很容易，这里插展示插入图片的格式，插入图片也一定要注意，不然图片显示不出来，这也是一个坑。
 ![image](http://guohongwei719.github.io/images/20150725/28.png)
 
 
-####29. 这就不用说了吧。
+#### 29. 这就不用说了吧。
 ![image](http://guohongwei719.github.io/images/20150725/29.png)
 
-####30. 第一篇博客就这样诞生，这酸爽。
+#### 30. 第一篇博客就这样诞生，这酸爽。
 ![image](http://guohongwei719.github.io/images/20150725/30.png)
 
 ###总结下，有三个坑吧
