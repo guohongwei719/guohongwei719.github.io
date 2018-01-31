@@ -15,35 +15,35 @@ categories: jekyll update
 ### 下面开始了，我都有截图，我会配合每张图来说步骤的。
 
 
-####1. 我们的写的博客都是免费保存在github上面的，所以首先得有个github账号吧，作为程序员这个还是得有的。有的话直接点击Sign in登录进去，没有的话Sign up。
+#### 1. 我们的写的博客都是免费保存在github上面的，所以首先得有个github账号吧，作为程序员这个还是得有的。有的话直接点击Sign in登录进去，没有的话Sign up。
 ![image](http://guohongwei719.github.io/images/20150725/1.png)
 
 
-####2. 填写用户名和密码，这个都要介绍真佩服自己。
+#### 2. 填写用户名和密码，这个都要介绍真佩服自己。
 ![image](http://guohongwei719.github.io/images/20150725/2.png)
 
 
-####3. 直接开始新建版本库。
+#### 3. 直接开始新建版本库。
 ![image](http://guohongwei719.github.io/images/20150725/3.png)
 
 
-####4. 填写版本库名字，这个很关键，一定是【用户名.github.io】的格式，后面发布博客后，可以通过版本库当做域名直接访问你的博客。
+#### 4. 填写版本库名字，这个很关键，一定是【用户名.github.io】的格式，后面发布博客后，可以通过版本库当做域名直接访问你的博客。
 ![image](http://guohongwei719.github.io/images/20150725/4.png)
 
 
-####5. 接下来可能稍微麻烦点，你得学会使用git。
+#### 5. 接下来可能稍微麻烦点，你得学会使用git。
 ![image](http://guohongwei719.github.io/images/20150725/5.png)
 
 
-####6. 把刚才创建的guohongwei719.github.io的版本库克隆到你电脑上面。
+#### 6. 把刚才创建的guohongwei719.github.io的版本库克隆到你电脑上面。
 ![image](http://guohongwei719.github.io/images/20150725/6.png)
 
 
-####7. 桌面上面就出现了这个文件夹，命令行用起来也挺方便。
+#### 7. 桌面上面就出现了这个文件夹，命令行用起来也挺方便。
 ![image](http://guohongwei719.github.io/images/20150725/7.png)
 
 
-####8. 到这个文件夹下面去看看，什么都没有，我电脑上面设置显示隐藏文件夹，因此可以看到.git。什么都没有当然不行，我们去一个网站下载博客风格的模板吧。
+#### 8. 到这个文件夹下面去看看，什么都没有，我电脑上面设置显示隐藏文件夹，因此可以看到.git。什么都没有当然不行，我们去一个网站下载博客风格的模板吧。
 ![image](http://guohongwei719.github.io/images/20150725/8.png)
 
 
