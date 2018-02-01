@@ -19,7 +19,7 @@ categories: jekyll update
 ##2.下载安装，破解
 
 
-1. office和破解工具下载好之后，就是安装了，系统需要设置为允许任何来源的安装，才可以使用激活工具。在你的电脑[系统偏好设置]-->[安全性与隐私]里面，或许你会没有看到任何来源选项，
+office和破解工具下载好之后，就是安装了，系统需要设置为允许任何来源的安装，才可以使用激活工具。在你的电脑[系统偏好设置]-->[安全性与隐私]里面，或许你会没有看到任何来源选项，
 <center>
 <img src="http://guohongwei719.github.io/images/20170308/1.png"/>
 </center>
@@ -30,17 +30,22 @@ sudo spctl --master-disable
 `
 
  然后输入密码即可，最后退出设置重新进入即可看到任何来源选项了。
+ 
 <center>
 <img src="http://guohongwei719.github.io/images/20170308/2.png"/>
 </center>
+
 <center>
 <img src="http://guohongwei719.github.io/images/20170308/3.png"/>
 </center>
-2. 安装时可能碰到如下问题，可能原因就是软件下载过程损坏，请重新下载安装。
+
+安装时可能碰到如下问题，可能原因就是软件下载过程损坏，请重新下载安装。
+
 <center>
 <img src="http://guohongwei719.github.io/images/20170308/4.png"/>
 </center>
-3. 安装完后不要打开office软件，打开破解工具.dmg，里面有把蓝色的钥匙，双击，出现一把黑色的锁，点击，输入系统密码，OK~搞定。
+
+安装完后不要打开office软件，打开破解工具.dmg，里面有把蓝色的钥匙，双击，出现一把黑色的锁，点击，输入系统密码，OK~搞定。
 
 注：我的系统版本是Seirra 10.12.5，其他系统上是否能成功就不一定了，想必问题不大了。
 
