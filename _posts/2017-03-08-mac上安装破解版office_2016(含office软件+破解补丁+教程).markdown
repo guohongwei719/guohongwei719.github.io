@@ -20,9 +20,11 @@ categories: jekyll update
 
 
 office和破解工具下载好之后，就是安装了，系统需要设置为允许任何来源的安装，才可以使用激活工具。在你的电脑[系统偏好设置]-->[安全性与隐私]里面，或许你会没有看到任何来源选项，
+
 <center>
 <img src="http://guohongwei719.github.io/images/20170308/1.png"/>
 </center>
+
 这时你需要恢复“任何来源”选项，即关闭Gatekeeper，你可以在终端输入spctl命令：
 
 `  

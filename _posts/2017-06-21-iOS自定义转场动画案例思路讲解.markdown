@@ -1,0 +1,164 @@
+---
+layout: post
+title:  "iOS自定义转场动画案例思路讲解"
+date:   2017-06-21 下午9:01
+categories: jekyll update
+---
+
+所谓转场，就是ViewController切换。在一般的应用里面我们使用最多的就是push和present了，然后就是tab里面的切换效果。但是如果我们需要一些自定义动画的时候要怎么做呢，比如下面这个效果如何实现的呢？本文就此讲解一下思路。
+
+<center>
+<img src="http://guohongwei719.github.io/images/20170621/1.gif"/>
+</center>
+
+
+## 1. 准备工作
+首先先将A、B界面创建好，实现常用的切换效果。这里关键的是B界面上面有六个按钮，每个按钮都是统一的上面图片，下面文字的样式。显然可以在extension里面为UIButton添加一个方法，配置好imageEdgeInsets和titleEdgeInsets即可实现。代码如下：
+
+```
+import Foundation
+import UIKit
+
+extension UIButton {
+    //设置按钮图片在上，文字在下的效果
+    func alignContentVerticallyByCenter() {
+//        contentHorizontalAlignment = .center
+//        contentVerticalAlignment = .center
+        
+        //图片与title之间有一个默认的间隔10
+        let offset: CGFloat = 10
+        
+        //在有的iOS版本上，会出现获得不到frame的情况，加上下面这两句可以100%得到
+//        titleLabel?.backgroundColor = backgroundColor
+//        imageView?.backgroundColor = backgroundColor
+        
+        //title
+        let titleWidth = titleLabel?.frame.size.width
+        let titleHeight = titleLabel?.frame.size.height
+        let titleLef = titleLabel?.frame.origin.x
+        let titleRig = frame.size.width-titleLef!-titleWidth!
+        //image
+        let imageWidth = imageView?.frame.size.width
+        let imageHeight = imageView?.frame.size.height
+        let imageLef = imageView?.frame.origin.x
+        let imageRig = frame.size.width-imageLef!-imageWidth!
+        
+        imageEdgeInsets = UIEdgeInsets(top: 0, left: -imageLef!, bottom: titleHeight!, right: -imageRig)
+        titleEdgeInsets = UIEdgeInsets(top: imageHeight!+offset, left: -titleLef!, bottom: 0, right: -titleRig)
+    }
+}
+
+```
+
+
+## 2. 然后就是实现动画部分
+实现部分我们需要建一个对象，实现UIViewControllerTransitioningDelegate 和 UIViewControllerAnimatedTransitioning 协议，关于这两个协议，在onevcat的
+[iOS7中的ViewController切换](https://onevcat.com/2013/10/vc-transition-in-ios7/)中有讲解。本文也有所参考。
+>UIViewControllerAnimatedTransitioning 这个接口负责切换的具体内容，也即“切换中应该发生什么”。开发者在做自定义切换效果时大部分代码会是用来实现这个接口。它只有两个方法需要我们实现：
+
+>UIViewControllerTransitioningDelegate 这个接口的作用比较简单单一，在需要VC切换的时候系统会像实现了这个接口的对象询问是否需要使用自定义的切换效果。这个接口共有四个类似的方法：
+
+#### UIViewControllerTransitioningDelegate协议的代码如下：
+
+```
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        self.presenting = true
+        return self
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        self.presenting = false
+        return self
+    }
+
+```
+presenting表示动画状态，表示B页面是将要显示出来，还是消失掉。根据这个状态后面动画的from和to是不一样的。然后返回当前对象，当前对象还实现了UIViewControllerAnimatedTransitioning协议。
+
+#### UIViewControllerAnimatedTransitioning协议的代码如下：
+
+```
+    //MARK: - UIViewControllerAnimatedTransitioning
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        let container = transitionContext.containerView
+        let screens: (from: UIViewController, to: UIViewController) = (transitionContext.viewController(forKey: .from)!, transitionContext.viewController(forKey: .to)!)
+        let menuVC = !presenting ? screens.from as! MenuViewController : screens.to as! MenuViewController
+        let bottomVC = !presenting ? screens.to : screens.from
+        let menuV = menuVC.view
+        let bottomV = bottomVC.view
+        
+        if self.presenting {
+            offStageMenuController(menuVC: menuVC)
+        }
+        
+        container.addSubview(bottomV!)
+        container.addSubview(menuV!)
+        
+        let duration = self.transitionDuration(using: transitionContext)
+        
+        UIView.animate(withDuration: duration,
+                       delay: 0.0,
+                       usingSpringWithDamping: 0.7,
+                       initialSpringVelocity: 0.8,
+                       options: [],
+                       animations: { 
+                        self.presenting ? self.onStageMenuController(menuVC: menuVC) : self.offStageMenuController(menuVC: menuVC)
+            },
+                       completion: { finished in
+                        transitionContext.completeTransition(true)
+                        if self.presenting {
+                            UIApplication.shared.keyWindow?.addSubview(screens.from.view)
+                        }
+                        UIApplication.shared.keyWindow?.addSubview(screens.to.view)
+            }
+        )
+    }
+    
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+        return 0.5
+    }
+
+```
+transitionContext里面可以拿到from和to的viewController，还能获取到containerView，动画都是在containView上发生的。from和to的view都要放到containerView上。
+transitionDuration这个是返回动画的时间，animateTransition是返回动画具体内容，实现动画的核心部分就是那一句代码，UIView.animate...。根据presenting配置好参数，起始和最终位置。起始和终止位置可以用下面方法设置：
+
+```
+    func offStage(amount: CGFloat) -> CGAffineTransform {
+        //返回平移x,y的结构体
+        return CGAffineTransform(translationX: amount, y: 0)
+    }
+    
+    //关
+    func offStageMenuController(menuVC: MenuViewController) {
+        menuVC.view.alpha = 0
+        
+        let topRowOffset: CGFloat = 300
+        let middleRowOffset: CGFloat = 150
+        let bottomRowOffset: CGFloat = 50
+        
+        menuVC.btns[0].transform = offStage(amount: -topRowOffset)
+        menuVC.btns[1].transform = offStage(amount: topRowOffset)
+        menuVC.btns[2].transform = offStage(amount: -middleRowOffset)
+        menuVC.btns[3].transform = offStage(amount: middleRowOffset)
+        menuVC.btns[4].transform = offStage(amount: -bottomRowOffset)
+        menuVC.btns[5].transform = offStage(amount: bottomRowOffset)
+    }
+    
+    //开
+    func onStageMenuController(menuVC: MenuViewController) {
+        menuVC.view.alpha = 1
+        
+        menuVC.btns[0].transform = CGAffineTransform.identity
+        menuVC.btns[1].transform = CGAffineTransform.identity
+        menuVC.btns[2].transform = CGAffineTransform.identity
+        menuVC.btns[3].transform = CGAffineTransform.identity
+        menuVC.btns[4].transform = CGAffineTransform.identity
+        menuVC.btns[5].transform = CGAffineTransform.identity
+    }
+
+```
+UIView有CGAffineTransform类型的属性transform，它是定义在二维空间上完成View的平移，旋转，缩放等效果的实现。
+## 3. 最后在B中用上面创建的类建一个对象赋给B的transitioningDelegate即可。
+
+
+## 4. 最后给出demo  [ChanelDemo](https://github.com/guohongwei719/ChanelDemo)
+
