@@ -1,0 +1,438 @@
+---
+layout: post
+title:  "iOS开发中的一些小技巧"
+date:   2016-12-21 下午10:30
+categories: jekyll update
+---
+
+
+### 几个地方
+定义UIImageView的时候加上clipsToBounds = true，不然图片会超出大小。
+定义UITableViewCell, 直接敲init，会提示
+定义UITableViewCell,的时候写上register，在cellFor的时候直接用。
+
+```
+tableView.register(MainTableViewCell.self, forCellReuseIdentifier: "MainTableViewCell")
+let cell = tableView.dequeueReusableCell(withIdentifier: "MainTableViewCell") as! MainTableViewCell
+```
+
+### 获取唯一标志，卸载以后也不变
+要使用keychain，其他方法都不靠谱，苹果禁掉了。
+
+<https://github.com/v2panda/PDKeyChain>
+
+```
+    NSString *uuid = [PDKeyChain keyChainLoad];
+    if (uuid) {
+        return uuid;
+    } else {
+        uuid = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+        [PDKeyChain keyChainSave:uuid];
+        return uuid;
+    }
+    return uuid;
+```
+
+
+### 解决pod repo update太慢问题
+只需要更新单个库即可
+
+```
+➜  sky-forest-ios git:(zyzz_1.4.2) pod repo update /Users/guohongwei719/.cocoapods/repos/master/Specs/0/f/b/MJRefresh
+```
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/1.png"/>
+</center>
+
+### 如果写了一些东西，但是发现不用了，可以用revert，不至于删掉，比如对此时此刻改造
+
+```
+git revert 6e18cd81198ababde0b3587afd78a00943ac87d6
+```
+
+
+### 清理缓存
+
+```
+open /Users/guohongwei719/Library/Developer/Xcode/DerivedData
+```
+
+### applicationWillTerminate 执行问题
+直接杀死app是可以执行的，但是如果按home进入后台，然后双击home杀掉，则不会执行。解决办法如下：
+
+```
+    [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^(){
+        //程序在10分钟内未被系统关闭或者强制关闭，则程序会调用此代码块，可以在这里做一些保存或者清理工作
+    }];
+```
+
+
+
+### 引用文件的问题
+如果是Swift项目，就是创建项目的时候选择的是Swift语言。那么
+在Swift文件中使用OC中的方法，要在OC_Swift_bridge.h中import
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/2.png"/>
+</center>
+
+在OC文件中使用OC中的方法，要在.pch文件中import
+ 
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/3.png"/>
+</center>
+
+
+在OC文件中使用Swift中的方法，在要使用的变量前面要加@objc, 还要要在OC文件中
+
+```
+#import "DaMai-Swift.h"
+```
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/4.png"/>
+</center>
+
+
+### 如何忽略xuserdata里面的文件
+1. 在.gitignore里面加入这些问题件；
+2. 如果还在，则注意清理缓存。  
+<http://blog.csdn.net/lixuezhi86/article/details/52162447>
+
+
+### 斗鱼里面Podfile
+
+```
+# Uncomment this line to define a global platform for your project
+platform :ios, '9.0'
+# Comment this line if you're not using Swift and don't want to use dynamic frameworks
+use_frameworks!
+
+target 'DYZB' do
+
+pod 'Alamofire', '~> 4.0.1'
+pod 'Kingfisher', '~> 3.1.1'
+
+end
+```
+
+
+### 开始担心没有适配iOS11就提交到appstore，会界面显示很乱。
+操心太多，不会的，因为使用的是Xcode8打包的，所以不会出问题，后来在iOS11上下在appstore的包来看，其实界面也是好的。如果Xcode9打包出来的不适配就有问题了，但是模拟器上是可以发现问题的。这个早就应该知道了。
+
+
+### 扩大UIButton的响应区域
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/5.png"/>
+</center>
+
+
+办法一：设置UIButton的contentMode为center，然后让UI切一个小图，size设置大一点；  
+办法二：写一个UIButton的Category，使用运行时的一些办法是判断点击范围，参考[[iOS 扩大UIButton的响应区域](http://blog.csdn.net/chenyong05314/article/details/39897031)](http://blog.csdn.net/chenyong05314/article/details/39897031)
+
+
+### 使用git reset --hard xxxxxx回退到以前的提交，但是忘了最后一个提交，回不去咋办，使用git reflog查看最后一个提交commit id
+如图
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/6.png"/>
+</center>
+
+
+git reflog记住了你所敲过的所有命令，而且每个命令所在的commit id都有备注，所以不用担心回不去了。  
+这里，我在e9120bb0上提交了fix ui，然后就回到之前的提交上去了，但是没保存开始的commit id，所以不知道怎么回去，最后使用这个命令解决了。
+
+
+### 如何把一个已经提交的commit，从一个分支放到另一个分支
+
+```
+➜  12345 git:(zyzz_1.4.0) git cherry-pick ba47bec0b0e07bef16f074526ad590d8ffdc01e7
+[zyzz_1.4.0 42a00548] 移除tab上的小红点
+```
+git cherry-pick continue  
+git cherry-pick abort
+
+这里加入openinstall后使用git cherry-pick的时候出现冲突了，问题和解决办法如下
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/7.png"/>
+</center>
+
+
+
+### 根据提交记录看rebase的作用
+➜  sky-forest-ios git:(zyzz_1.4.0_housetype) git checkout zyzz_1.4.0
+Switched to branch 'zyzz_1.4.0'  
+➜  sky-forest-ios git:(zyzz_1.4.0) git rebase zyzz_1.4.0_housetype
+之前zyzz_1.4.0上的提交记录如下
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/8.png"/>
+</center>
+
+
+rebase以后的提交记录，下方红框中是zyzz_1.4.0_housetype的最新提交记录，上房红框是zyzz_1.4.0的最新提交记录。
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/9.png"/>
+</center>
+
+
+
+
+### block中循环引用，crash
+这个界面就是加载两张大图片，获取到image后，根据image的size来重新调整UI，这里使用了
+
+```
+[UIImageView(WebCache) sd_setImageWithURL:placeholderImage:options:progress:completed:]
+```
+由于网络很慢，退出页面后还是在加载，然后在completed的block中使用了self，结果就闪退了。这里要处理一下。
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/10.png"/>
+</center>
+
+
+下面是报错信息
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/11.png"/>
+</center>
+
+
+
+### presentedViewController与presentingViewController
+presentedViewController表示当前用户正在操作的ViewController，presentingViewController表示被当前ViewController遮挡住的ViewController。
+
+
+### 往collectionView上加view的时候注意frame
+下面collectionView的背景色为蓝色，是加到content上
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/12.png"/>
+</center>
+
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/13.png"/>
+</center>
+
+
+### 隐藏导航栏
+self.navigationController.navigationBar.hidden = YES    
+不过要在viewWillAppear里面写，在viewDidLoad里面写没效果。
+
+
+### A页面进入B页面执行顺序
+A -> viewWillDisappear  
+B -> viewWillAppear  
+A -> viewDidDisappear  
+B -> viewDidAppear  
+
+
+### 1. 修改状态栏文字颜色
+* 无导航栏
+
+```
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
+```
+* 有导航栏
+需要在UINavigationController子类里面重写childViewControllerForStatusBarStyle方法。然后再在controller里面加上preferredStatusBarStyle。
+
+
+```
+ #import "ZYNavigationController.h"
+
+@interface ZYNavigationController ()
+
+@end
+
+@implementation ZYNavigationController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+}
+
+- (UIViewController *)childViewControllerForStatusBarStyle {
+    return self.topViewController;
+}
+
+@end
+
+```
+
+
+
+### 2. UIButton中文字换行
+
+```
+UIButton *button =[[UIButton alloc]initWithFrame:CGRectMake(100, 100, 200, 40)];
+button.backgroundColor = [UIColor redColor];
+[button setTitle:@"我是Chenhaijian\n   我要换行" forState:UIControlStateNormal];
+button.titleLabel.lineBreakMode = 0;//这句话很重要，不加这句话加上换行符也没用
+```
+
+
+### 3. Apple Mach-O Linker Error
+全局变量重复定义的问题哦！也没有其他提示错误。
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/14.png"/>
+</center>
+
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/15.png"/>
+</center>
+
+
+
+###4. 修改远程分支
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/16.png"/>
+</center>
+
+
+
+
+### 5. 打的包不能用问题解决
+在自己电脑上面打出的包放到蒲公英上下载下来居然不能安装，打包过程中也没提示有问题，解决办法如下：  
+1. 重新下载Provisioning Profiles，安装
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/17.png"/>
+</center>
+
+
+2. 安装过程提示有问题，点击reset-->Try again
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/18.png"/>
+</center>
+
+
+
+### 6. 手势和UITableView上点击冲突
+有个需求，是在UIView里面添加一个子视图UITableView，然后在UIView上添加了一个UITapGestureRecognizer，之后发现UITableView里的cell点击没有反应，经过查询资料发现解决方法：  
+1.首先设置UITapGestureRecognizer的代理  
+2.重写- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch  
+这个方法询问delegate是否允许手势接收者接收一个touch对象，返回YES，则允许对这个touch对象审核，NO，则不允许。
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/19.png"/>
+</center>
+
+
+
+###7. Apple Mach-O Linker(Id) Error
+rebase代码以后，运行不了，出现这个问题，如图
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/20.png"/>
+</center>
+
+
+解决办法：你可以到Build Phases的Compile Source中看，找不到这个文件。所以到ParallaxTableViewCell从项目目录中删除，然后重新add进来即可。
+
+
+
+
+<center>
+<img src="http://guohongwei719.github.io/images/20161221/1.png"/>
+</center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
