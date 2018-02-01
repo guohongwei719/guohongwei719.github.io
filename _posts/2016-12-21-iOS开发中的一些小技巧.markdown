@@ -294,7 +294,7 @@ button.titleLabel.lineBreakMode = 0;//这句话很重要，不加这句话加上
 
 
 
-###4. 修改远程分支
+### 4. 修改远程分支
 
 <center>
 <img src="http://guohongwei719.github.io/images/20161221/16.png"/>
@@ -332,7 +332,7 @@ button.titleLabel.lineBreakMode = 0;//这句话很重要，不加这句话加上
 
 
 
-###7. Apple Mach-O Linker(Id) Error
+### 7. Apple Mach-O Linker(Id) Error
 rebase代码以后，运行不了，出现这个问题，如图
 
 <center>
