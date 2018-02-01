@@ -11,10 +11,10 @@ categories: jekyll update
 <img src="http://guohongwei719.github.io/images/20180131/QQ20180131-120114.gif"/>
 </center>
 
-### 1. 实现思路
+## 1. 实现思路
 这种能够上下滚动，显然是一个scrollview。我们可以通过自定义UICollectionViewFlowLayout，来实现我们想要的效果。
 
-### 2. 自定义UICollectionViewFlowLayout
+## 2. 自定义UICollectionViewFlowLayout
 首先定义几个常量，方便后面代码中使用
 
 ```
@@ -209,7 +209,7 @@ let kRectRange: CGFloat = UIScreen.main.bounds.size.height + kNormalCellHeight *
     }
 ```
 
-### 3. 点击cell时候的处理
+## 3. 点击cell时候的处理
 如果是顶上的大图则不处理，如果是下面的图则滚动到指定位置即可
 
 ```
@@ -227,5 +227,5 @@ let kRectRange: CGFloat = UIScreen.main.bounds.size.height + kNormalCellHeight *
 
 ```
 
-### 4. 最后给出demo  [ChanelDemo](https://github.com/guohongwei719/ChanelDemo)
+## 4. 最后给出demo  [ChanelDemo](https://github.com/guohongwei719/ChanelDemo)
 
