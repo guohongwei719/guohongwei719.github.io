@@ -1,0 +1,441 @@
+---
+layout: post
+title:  "runtime中元类的理解"
+date:   2015-09-10 中午13:21
+categories: jekyll update
+---
+
+
+
+
+##元类
+这几天看了一些runtime底层的一些介绍，感受最深的就是对元类的讲解了。突然有种恍然大悟的感觉，以前我们经常说一切皆对象，在这里体现出来了。
+
+
+###1. 元类是什么
+众所周知Objective-C（以下简称OC）中的消息机制，消息的接收者可以是一个对象，也可以是一个类。那么这两种情况统一为一种情况不是更方便吗？苹果当然早就想到了，这也正是元类的用处。苹果统一把消息接收者作为对象。等等，这也是说类也是对象？yes，就是这样。就是说，OC中所有的类都是一种对象。由一个类实例化来的对象叫实例对象，这好理解，那么类作为对象（称之为类对象），又是什么类的对象呢？当然也容易猜到，就是元类（MetaClass）。现在到给元类下定义的时候了：元类就是类对象所属的类。所以，实例是类的实例，类作为对象又是元类的实例。已经说了，OC中所有的类都是一种对象，所以元类也是对象，那么元类是什么的实例呢？答曰：根元类，同时根元类是其自身的实例。
+
+上面讲到了实例对象、类对象、元类对象，有什么区别？
+实例对象：当我们在代码中new一个实例对象时，拷贝了实例所属的类的成员变量，但不拷贝类定义的方法，调用实例方法时，调用实例的isa指针去寻找方法对应的函数指针。
+
+类对象：是一个功能完整的对象，特殊之处在于它们是由程序员定义而在运行时由编译器创建的，它没有自己的实例变量（这里区别于类的成员变量，它们是属于实例对象的，而不是属于类对象的，类方法是属于类对象自己的），但类对象中存着成员变量和实例方法列表。
+
+元类对象：OC的类方法是使用元类的根本原因，因为其中存储着对应的类对象调用的方法即类方法。其他时候都倾向于隐藏元类，因此真实世界没有人发送消息给元类对象。元类的定义和创建看起来都是编译器自动完成的，无须人为干涉。要获取一个类的元类，可使用如下定义的函数：  
+
+```
+Class objc_getMetaClass(const char *name); // name为类的名字
+```
+
+此外还有一个获取对象所属的类的函数：
+
+```
+Class object_getClass(id obj);
+```
+由于类对象是元类的实例，所以当传入的参数为类名时，返回的就是指向该类所属元类的指针。
+
+
+
+###2. 元类的构建机制
+既然所有的类都是对象，那么元类又是什么类的对象？这样下去，不是子子孙孙无穷尽也？当然不行，OC作为一门编程语言，当然要满足完备性----既定的各条规则都要满足，不能相互矛盾，也不能存在漏洞。
+
+OC作为运行时语言，上面提到的类与元类在运行时都是objc_class类型。在Objective-C2.0中，objc_class的定义如下：
+
+```
+struct objc_class {
+    Class isa  OBJC_ISA_AVAILABILITY;
+
+#if !__OBJC2__
+    Class super_class                                        OBJC2_UNAVAILABLE;
+    const char *name                                         OBJC2_UNAVAILABLE;
+    long version                                             OBJC2_UNAVAILABLE;
+    long info                                                OBJC2_UNAVAILABLE;
+    long instance_size                                       OBJC2_UNAVAILABLE;
+    struct objc_ivar_list *ivars                             OBJC2_UNAVAILABLE;
+    struct objc_method_list **methodLists                    OBJC2_UNAVAILABLE;
+    struct objc_cache *cache                                 OBJC2_UNAVAILABLE;
+    struct objc_protocol_list *protocols                     OBJC2_UNAVAILABLE;
+#endif
+
+} OBJC2_UNAVAILABLE;
+/* Use `Class` instead of `struct objc_class *` */
+```
+
+其中，Class定义如下：
+
+```
+/// An opaque type that represents an Objective-C class.
+typedef struct objc_class *Class;
+```
+可以看出，OC中每个类都包含一个isa变量，显然这里的isa是指向另一个类的指针，说白了就是表面这个类是哪个类的实例，以便找到代码中调用的本类或父类的类方法。对于NSObject及其子类，指向的就是它的元类，正如实例中也有个isa指针指向其所属的类一样。而对于元类，每个元类的isa指针都指向根元类。那么根元类的isa指向哪里？---它自己。这样就构成了一个封闭的循环，实现了无懈可击的OC类系统。这种关系在下面的图中有清晰的体现。
+
+除了isa声明了实例与所属类的关系，还有super_class声明了类、元类的继承关系。每个类对象都有对应的元类，每个类（根类除外）都有一个superclass，同样每个元类也有一个superclass，并且子类与子元类、父类与父元类分别在同一个层次。这种关系借用网上的一张图来说明，一目了然。
+
+![](http://guohongwei719.github.io/images/20150910/1.png)
+
+注意：根元类的superclass不是nil而是根类。对于OC原生的类，根元类的父类就是系统的根类NSObject。但根类不一定是NSObject，因为后面介绍的objc_allocateClassPair函数也可以创建出一个根类。
+
+
+###3. 元类的构建机制
+上面讲到了OC运行时类的定义，这里可以看看对象的定义，重点关注objc_object 和 id。
+
+```
+#if !OBJC_TYPES_DEFINED
+/// An opaque type that represents an Objective-C class.
+typedef struct objc_class *Class;
+
+/// Represents an instance of a class.
+struct objc_object {
+    Class isa  OBJC_ISA_AVAILABILITY;
+};
+
+/// A pointer to an instance of a class.
+typedef struct objc_object *id;
+#endif
+
+/// An opaque type that represents a method selector.
+typedef struct objc_selector *SEL;
+
+/// A pointer to the function of a method implementation. 
+#if !OBJC_OLD_DISPATCH_PROTOTYPES
+typedef void (*IMP)(void /* id, SEL, ... */ ); 
+#else
+typedef id (*IMP)(id, SEL, ...); 
+#endif
+```
+这说明OC中每个对象也都包含一个isa变量，这里的isa，指向实例对象所属的类。在运行时，[obj aMessage];被转化为objc_msg(obj, @selector(aMessage));，这里，
+@selector(aMessage)返回一个SEL数据类型，即方法选择器。SEL主要作用是快速的通过方法名字(aMessage)查找到对应方法的函数指针，然后调用其函数。SEL其本身是一个int型的地址，地址中存放着方法的名字。在一个类中，每一个方法对应着一个SEL。iOS类中不能存在两个名称相同的方法，即使参数类型不同，因为SEL是根据方法名生成，相同的方法名称只能对应一个SEL。
+
+当一个消息发送给任何一个对象，方法的检查器从对象的isa指针开始，然后是父类。具体地，在objc_msgSend函数中，首先通过obj的isa指针找到obj对应的class。在class中，有一块最近调用的方法的指针缓存，所以先去cache通过selector查找对应的method，若cache中未找到，再去method list中查找，若method list中未找到，则去superClass中查找。若能找到，则将method加入到cache中，以方便下次查找，并通过method中的函数指针跳转到对应的函数中去执行。对最后一句不了解的话，请看objc_method定义：
+
+```
+struct objc_method { 
+  SEL method_name; // 方法名称 
+  const char *method_typesE; // 参数和返回类型的描述字串 
+  IMP method_imp; // 方法的具体的实现的指针 
+}
+```
+由上看出，OC中实例方法是通过isa找到object所属的class，再在class中找到要调用的method。此可得出结论：class即类对象中存储着实例方法。实际上，类对象中存储着类定义的一切：成员变量、属性列表、遵守的协议等，但不包括类方法。类方法的定义在哪？就是在元类里面。此外元类中还存在着类的信息（类的版本，名字），比如发送一个类消息[class aMessage];，class中的isa就指向class的元类，在元类中搜索调用的类方法，搜索层次类似于实例方法的搜索。
+
+
+###4. 元类的应用
+类对象和元类对象的相关方法：
+
+1. object_getClass跟随实例的isa指针，返回此实例所属的类，对于实例对象（instance）返回的是类（class），对于类（class）则返回的是元类（metaclass）；
+2. -class方法对于实例对象（instance）会返回类（class），但对于类（class）则不会返回元类（metaclass），而只会返回类本身，即[@"instance" class]返回的是__NSCFConstantString，而[NSString class]返回的是NSString。
+3. class_isMetaClass可判断某类是否为元类。
+4. 使用objc_allocateClassPair可在运行时创建新的类与元类对，使用class_addMethod和class_addIvar可向类中增加方法和实例变量，最后使用objc_registerClassPair注册后，就可以使用此类了。这体现了OC作为运行时语言的强大之一：在代码中动态创建类并添加方法。
+
+```
+Class newClass = objc_allocateClassPair([NSError class], "RuntimeErrorSubclass", 0);
+class_addMethod(newClass, @selector(addedMethod), (IMP)added_method_implementation, "v@:");
+void added_method_implementation(id self, SEL __cmd)
+{
+    // do something
+}
+```
+说明：objc_allocateClassPair函数的作用是创建一个新类newClass及其元类，三个参数依次为newClass的父类，newClass的名称，第三个参数通常为0。然后可向newClass中添加变量及方法，注意若要添加类方法，需用objc_getClass(newClass)获取元类，然后向元类中添加类方法。接下来必须把newClass注册到运行时系统，否则系统不能识别这个类。
+
+
+### 5. 根据以上理解比较一下object_getClass(obj)和[obj class]的区别
+其实很简单，直接看源代码吧。
+object_getClass(obj)的代码实现：
+
+```
+Class object_getClass(id obj)
+{
+    return _object_getClass(obj);
+}
+```
+其中_object_getClass(obj)是一个静态内联函数，代码实现如下：
+
+```
+static inline Class _object_getClass(id obj)
+{
+    #if SUPPORT_TAGGED_POINTERS
+    if （OBJ_IS_TAGGED_PTR(obj)）{
+        uint8_t slotNumber = ((uint8_t)(uint64_t) obj) & 0x0F;
+        Class isa = _objc_tagged_isa_table[slotNumber];
+        return isa;
+    }
+    #endif
+        if (obj) return obj->isa;
+        else return Nil;
+}
+```
+简单的说_object_getClass函数就是返回对象的isa指针。
+[obj class]的代码实现分为两种情况，分别是obj为实例对象和类对象，代码如下所示：
+
+```
+// 类方法直接返回自身指针
+\+ (Class)class
+ {
+    return self
+  }
+// 实例方法调用object_getClass，返回isa指针
+\- (Class)class 
+{
+    return object_getClass(self)
+}
+```
+通过以上代码可以看出，调用[obj class]，不管obj对实例对象还是类对象，结果都是一样的。
+
+
+6. 看下这几个个面试题吧
+![](http://guohongwei719.github.io/images/20150910/2.png)
+第一题解析如下：
+在调用[self class]时，会转化为objc_magSend函数。函数定义如下：
+
+```
+id objc_msgSend(id self, SEL op, ...)
+```
+我们把self做为第一个参数传递进去。而在调用[super class]时，会转化为objc_msgSendSuper函数。看下函数定义：
+
+```
+id objc_msgSendSuper(struct objc_super *super, SEL op, ...)
+```
+第一个参数是objc_super这样一个结构体，其定义如下：
+
+```
+struct objc_super {
+    __unsafe_unretained id receiver;
+    __unsafe_unretained Class super_class;  
+};
+```
+结构体有两个成员，第一个成员是receiver，类似于上面的objc_msgSend函数第一个参数self。第二个成员是记录当前类的父类是什么。
+
+所以当调用[self class]时，实际先调用的是objc_msgSend函数，第一个参数是Son当前的这个实例，然后在Son这个类里面去找-(Class)class这个方法，没有就去父类Father里找，也没有，最后在NSObject类中发现这个方法。而-(Class)class的实现就是返回self的类别，故上述输出结果为Son。
+
+objc Runtime开源代码对- (Class)class方法的实现：
+
+```
+\- (Class)class {
+    return object_getClass(self);
+}
+```
+而当调用[super class]时，会转换为objc_msgSendSuper函数。第一步先构造objc_super结构体，结构体第一个成员就是self，第二个成员是(id)class_getSuperclass(objc_getClass("son"))，实际该函数输出结果为Father。第二部是去Father这个类里去找- (Class)class，没有，然后去NSObject类去找。找到了，最后内部是使用objc_msgSend(objc_super->receiver， @selector(class))去调用，此时已经和[self class]调用相同，故上述输出结果仍然返回Son。
+
+
+
+第二题解析如下：
+运行结果是
+
+`
+2014-11-05 14:45:08.474 Test[9412:721945] 1 0 0 0
+`
+对于
+
+`
+ BOOL res1 = [(id)[NSObject class] isKindOfClass:[NSObject calss]];
+`
+首先还是看看isKindOfClass的实现：
+
+```
+- (BOOL)isKindOfClass: aClass
+{
+    Class cls;
+    for (cls = isa; cls; cls = cls->superclass) 
+        if (cls == (Class)aClass)
+            return YES;
+    return NO;
+}
+```
+当[NSObject class]对象第一次进行比较的时候，得到它的isa为NSObject的Meta Class，这个时候NSObject Meta Class 和 NSObject Class不相等。然后取出NSObject的Meta Class的Super class，这个时候又变成了NSObject Class，所以相等。
+对于
+
+`
+ BOOL res2 = [(id)[NSObject class] isMemberOfClass:[NSObject calss]];
+`
+先看看isMemberOfClass:的实现吧，
+
+```
+- (BOOL)isMemberOf:aClass
+{
+    return isa == (Class)aClass;
+}
+```
+当前的isa指向NSObject的Meta Class，所以和NSObject Class不相等。所以输出结果为NO。
+
+
+第三题解析如下：
+结果是输出
+
+`
+2017-07-12 10:20:51.067 test[1038:39336] IMP: - [NSObject(Sark) foo]
+2017-07-12 10:20:51.068 test[1038:39336] IMP: - [NSObject(Sark) foo]
+`
+注意这里有点蹊跷的是如果将这个分类写的一个文件import进来会编译不过的，但是如果直接写在.m文件，像下面这样，就是好的，可以编译过。
+
+```
+#import "ViewController.h"
+@interface NSObject (Sark)
+\+ (void)foo;
+@end
+@implementation NSObject (Sark)
+\- (void)foo
+{
+    NSLog(@"IMP: - [NSObject(Sark) foo]");
+}
+@end
+@interface ViewController ()
+@end
+@implementation ViewController
+\- (void)viewDidLoad {
+    [super viewDidLoad];
+    [NSObject foo];
+    [[NSObject new] foo];
+}
+@end
+```
+
+1. objc runtime加载完后，NSObject的Sark Category被加载。而NSObject的Sark Category的头文件+ (void)foo并没有实质参与到工作中，只是给编译器进行静态检查，所以我们编译上述代码会出现警告，提示我们没有实现+ (void)foo方法。而在代码编译中，它已经被注释掉了。
+2. 实际被加入到Class的method list的方法是- (void)foo，它是一个实例方法，所以加入到当前对象NSObject的方法列表中，而不是NSObject Meta class的方法列表中。
+3. 当执行[NSObject foo]时，我们看下整个objc_msgSend的过程：
+objc_msgSend第一个参数是"(id)objc_getClass("NSObject")"，获得NSObject Class的对象。
+类方法在Meta Class的方法列表中找，我们在load Category方法时加入的是- (void)foo实例方法，所以并不在NSObject Meta Class的方法列表中，继续往super class中找，NSObject Meta Class的super class是NSObject本身，所以，这个时候我们能够找到 - (void)foo这个方法。所以输出结果。
+当执行[[NSObject new] foo]，我们看下整个objc_msgSend的过程：
+ [NSObject new]生成一个NSObject对象，直接在该对象的类（NSObject）的方法列表里找，能够找到，所以正常输出结果。
+
+#参考文章
+[清晰理解Objective-C元类](http://blog.csdn.net/beclosedtomyheart/article/details/50164353)  
+[object_getClass(obj)与[obj class]的区别-源代码解析](http://www.jianshu.com/p/3ac392a79390?utm_campaign=maleskine&utm_content=note&utm_medium=pc_all_hots&utm_source=recommendation)  
+[刨根问底Objective－C Runtime](http://www.cocoachina.com/ios/20141224/10740.html)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
