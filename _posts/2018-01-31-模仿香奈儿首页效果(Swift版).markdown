@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "模仿香奈儿首页效果(Swift版)"
-date:   2018-01-31 下午5:01
+date:   201-01-31 下午5:01
 categories: jekyll update
 ---
 
