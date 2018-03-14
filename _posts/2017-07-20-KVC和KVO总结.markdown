@@ -1,0 +1,171 @@
+---
+layout: post
+title:  "KVC和KVO总结"
+date:   2017-07-20 下午7:13
+categories: jekyll update
+---
+
+###引言
+今天看了KVC和KVO的视频，总结一下，便于以后回顾。
+[KVC地址](https://pan.baidu.com/s/1S-TdDMPPg2Pn19q58Asawg)
+[KVO地址](https://pan.baidu.com/s/1WynOVrnL_wV87PMXORDV3g)
+
+# KVC（key-value-coding，即键值编码）
+### KVC 应用场景
+> 1. 对私有变量进行赋值
+> 2. 字典转模型
+
+### 对变量进行赋值和取值
+比如有个Person类，有name 和 age 属性，还有个dog属性，dog有体重属性。
+
+```
+Person *p = [[Person alloc] init];
+[p setValue:@"张三" forKey: @"name"];
+[p setValue:@20 forKey: @"age"];
+
+
+p.dog = [[Dog alloc] init];
+ // 会报错
+[p steValue: @200 forKey: @"dog.weight"]; 
+
+// 正确，说明forKeyPath是包含了forKey这个方法的功能的,甚至forKeyPath方法还有它自己的高级的功能,它会先去找有没有dog这个key,然后去找有没有weight这个属性。所以我们在使用kvc的时候,最好用forKeyPath这个方法。
+[p setValue: @200 forKeyPath: @"dog.weight"]; 
+
+```
+
+如果Person还有个 _height的私有属性，如下
+```
+#import "Person.h"
+@implementation Person
+{
+  NSInteger _height;
+}
+
+- (void)logHeight
+{    
+  NSLog(@"%ld",_height);
+}
+@end
+```
+这时候是没有办法直接给身高赋值，外满我们访问不到，但是通过KVC就可以了。
+
+```
+[p setValue:@170 forKey:@"height"];
+```
+这里我们传入的字符串key是 height，但是定义的属性是 _height，但是通过KVC还是可以给 _height 属性赋值。这说明对某一属性进行赋值，可以不用加下划线，它的查找规则应该是先查找和直接写入的字符串相同的成员变量，如果找不到就找以下划线开头的成员变量。
+
+### KVC字典转模型
+
+Person 类对外提供一个接口，将转模型的工作放到模型中。外界可以直接将字典传入，和平时转模型相比，KVC更加方便。
+```
+- (instancetype)initWithDict:(NSDictionary *)dict
+{
+   if (self = [super init]) {
+        [self setValuesForKeysWithDictionary:dict];
+    }
+    returnself;
+}
+
+NSDictionary*PersonDict = @{@"name":@"李四",@"age":@"18"};
+Person *p = [Person  personWithDict:PersonDict];
+```
+
+# KVO（key-value-observing）
+### KVO用法
+利用一个key来找到某个属性并监听其值的改变，是一种典型的观察者模式。
+其用法如下：
+* 添加观察者
+* 在观察者中实现监听方法，observeValueForKeyPath:ofObject:change:context: 
+* 移除观察者
+
+```
+//让对象b监听对象a的name属性，KVO监听的是set方法
+//options属性可以选择是哪个
+ /*
+     NSKeyValueObservingOptionNew =
+0x01, 新值
+     NSKeyValueObservingOptionOld =
+0x02, 旧值
+     */
+    [a addObserver:b forKeyPath:@"name"options:kNilOptionscontext:nil];
+  a.name = @"zzz";
+
+#pragma mark - 实现KVO回调方法
+/*
+ *  当对象的属性发生改变会调用该方法
+ *  @param keyPath 监听的属性
+ *  @param object  监听的对象
+ *  @param change  新值和旧值
+ *  @param context 额外的数据
+ */
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+ofObject:(id)object
+change:(NSDictionary<NSString *,id>
+*)change context:(void *)context
+{
+    NSLog(@"%@的值改变了,",keyPath);
+    NSLog(@"change:%@", change);
+}
+
+// 最后不要忘记，和通知一样，要在dealloc方法里面移除监听
+
+- (void)dealloc
+{
+    [a removeObserver:bforKeyPath:@"name"];
+}
+```
+### 手动触发KVO
+上面介绍的是自动触发KVO，值一旦改变就触发。如果手动触发，则要实现一个方法，如下。默认是返回YES。
+![](http://upload-images.jianshu.io/upload_images/548341-e6e2ff5e965e646b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+除此之外，还要在值改变的地方加上两个方法：
+![](http://upload-images.jianshu.io/upload_images/548341-50d75c91661d9177.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+###  观察容器属性
+利用KVC方法
+```
+NSMutableArray *tempArr = [_p mutableArrayValueForKey: @"arr"];
+[tempArr addObject:@"obje"];
+```
+
+### KVO原理
+
+KVO的底层原理还是涉及到了runtime，所以理解其原理之间还是要了解runtime的机制。
+当一个类的属性被观察的时候，发生了三件事：
+1. 系统会通过runtime动态的创建一个该类的派生类；
+2. 并且会在这个类中重写基类被观察的属性的setter方法；
+3. 系统将这个类的isa指针指向了派生类。
+这就实现了给监听的属性赋值时调用的是派生类的setter方法，重写的setter方法会在调用原setter方法前后，通知观察对象值的改变。
+
+根据这个原理可以写一个自己的KVO，如下
+![](http://upload-images.jianshu.io/upload_images/548341-b91537842a195ecb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
