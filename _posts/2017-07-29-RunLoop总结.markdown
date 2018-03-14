@@ -1,0 +1,235 @@
+---
+layout: post
+title:  "RunLoop总结"
+date:   2017-07-29 下午7:13
+categories: jekyll update
+---
+
+
+# 什么是RunLoop
+[Runloop视频](https://pan.baidu.com/s/10JEJoLCai-gPICm1m3LoYA)  
+这个视频讲得很好，看完收获很大，对RunLoop有概念了，并且了解了一些应用。尤其是前面那个子线程timer的例子，一步一步递进，容易理解，建议多看几遍。
+从这个例子开始了解，创建计时器：
+ 主线程添加计时器
+![主线程添加计时器](http://upload-images.jianshu.io/upload_images/548341-25a6d92a71b2ba2b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+上面的scheduledTimerWithTimeInterval是对下面的封装。是添加到NSRunLoop的默认模式，还是要用下面的方式创建加timer。
+
+子线程添加计时器
+* 一条线程的生命只能由它的任务保住，让线程有执行不完的任务，线程就不会释放了。
+* 一条线程上面的RunLoop默认是不循环的，要手动run起来。[[NSRunLoop currentRunLoop] run]死循环，和while(true)一样，但是更多内容。
+* 执行currentRunLoop() 第一次获取RunLoop的时候才创建，属于懒加载。
+* 暴力退出线程 [NSThread exit];
+![](http://upload-images.jianshu.io/upload_images/548341-bb4a945652b708bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![](http://upload-images.jianshu.io/upload_images/548341-2259a7d053e4304c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+CFRunLoopRun的伪代码   [Runloop培训视频有讲解](https://ke.qq.com/webcourse/index.html#course_id=229709&term_id=100271056&taid=1657780067074381&vid=q1422t1zu5j)
+两小时二十五分钟开始听比较好。
+
+```
+__CFRunLoopRun {
+    do {
+        __CFRunLoopDoBlocks 处理 block
+        __CFRunLoopDoSources0 处理 source0
+        if (判断是否有其他消息需要处理，如果有) {
+            goto: handler_msg(处理消息模块)
+        }
+        __CFRunLoopServiceMachPort(wait) 准备休眠 阻塞 // 如果有消息来了，需要处理就醒了
+       handle_msg: (处理消息模块：timer, gcd, __CFRunLoopDoSource1)
+
+    } while(1)
+}
+
+```
+
+
+## 从字面上看
+* 运行循环
+* 跑圈
+
+## 基本作用
+* 保持程序的持续运行（比如主运行循环）
+* 处理APP中的各种事件（比如触摸事件、定时器事件、Selector事件）
+* 节省CPU资源，提高程序性能：该做事时做事，该休息时休息
+
+## 存在价值
+
+![没有RunLoop](http://upload-images.jianshu.io/upload_images/548341-506c617d12257eb9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![有RunLoop](http://upload-images.jianshu.io/upload_images/548341-ce0315f1ac7fb0fc.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![主运行循环](http://upload-images.jianshu.io/upload_images/548341-6b4c68a02b6a0fce.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+## RunLoop 对象
+* iOS中有两套API来访问和使用RunLoop
+        1. Foundation（NSRunLoop）
+        2. Core Foundation（CFRunLoopRef）
+* NSRunLoop 和 CFRunLoopRef 都代表着 RunLoop 对象
+* NSRunLoop 是基于 CFRunLoopRef 的一层OC包装，所以要了解 RunLoop 内部结构，多研究 CFRunLoopRef 层面的 API（CoreFoundation层面）
+
+## RunLoop 与多线程
+* 每条线程都有唯一的一个与之对应的 RunLoop 对象
+* 主线程的RunLoop 已经自动创建好了，子线程的 RunLoop 需要主动创建
+* RunLoop 在第一次获取时创建，在线程结束时销毁
+
+## 获取 RunLoop 对象
+* Foundation
+```
+[NSRunLoop currentRunLoop];  // 获取当前线程的 RunLoop 对象
+[NSRunLoop mainRunLoop]; // 获得主线程的 RunLoop 对象
+```
+* Core Foundation
+```
+CFRunLoopGetCurrent(); // 获得当前线程的RunLoop 对象
+CFRunLoopGetMain();  // 获得主线程的 RunLoop 对象
+```
+
+## RunLoop相关类
+* Core Foundation 中关于 RunLoop 的5个类
+    1. CFRunLoopRef
+    2. CFRunLoopModeRef
+    3. CFRunLoopSourceRef
+    4. CFRunLoopTimerRef
+    5. CFRunLoopObserveRef  
+
+注：RunLoop如果没有这些东西，会直接退出
+
+## RunLoop 应用
+* 常驻线程
+* NSTimer
+* 自动释放池
+* PerformSelector
+* ImageView 显示
+
+### 1. 常驻线程
+应用场景：经常在后台进行耗时操作，比如：监控联网状态，扫描沙盒等，不希望线程处理完事件就销毁，保持常驻状态。
+第一种
+
+```
+// 开启
+- (void)run
+{
+// addPort: 添加端口（就是source）forMode: 设置模式
+    [[NSRunLoop currentRunLoop] addPort: [NSPort port] forMode: NSDefaultRunLoopMode];
+// 启动RunLoop
+    [[NSRunLoop currentRunLoop] run];
+
+ /*
+  //另外两种启动方式
+    [NSDate distantFuture]:遥远的未来  这种写法跟上面的run是一个意思
+    [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+    不设置模式
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate distantFuture]];
+  */
+}
+
+// 退出当前线程
+[NSThread exit];
+
+```
+### 2. NSTimer (最常见 RunLoop 使用)
+
+```
+- (void)timer
+{
+    NSTimer *timer = [NSTimer timerWithTimeInterval:2.0 target:self selector:@selector(run) userInfo:nil repeats:YES];
+    // 定时器只运行在NSDefaultRunLoopMode下，一旦RunLoop进入其他模式，这个定时器就不会工作
+    //    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+
+    // 定时器只运行在UITrackingRunLoopMode下，一旦RunLoop进入其他模式，这个定时器就不会工作
+    //    [[NSRunLoop currentRunLoop] addTimer:timer forMode:UITrackingRunLoopMode];
+
+    // 定时器会跑在标记为common modes的模式下
+    // 标记为common modes的模式：UITrackingRunLoopMode和NSDefaultRunLoopMode兼容
+    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+}
+```
+
+```
+- (void)timer2
+{
+    // 调用了scheduledTimer返回的定时器，已经自动被添加到当前runLoop中，而且是NSDefaultRunLoopMode
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(run) userInfo:nil repeats:YES];
+ 
+    // 修改模式
+    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+}
+```
+UITableView 滚动时模式由 NSDefaultRunLoopMode 进入 UITrackingRunLoopMode，NSTimer 不再响应。NSRunLoopCommonMode模式下两种模式都可运行。
+
+### 3. 自动释放池
+参见参考文章
+
+
+main里面有个死循环就是RunLoop循环
+目的：
+1. 保证程序不退出；
+2. 负责监听事件，触摸（有没有人摸我）、时钟、网络事件（回调）；
+3. 如果没有时间发生，会让程序进入休眠状态；
+4. 五种模式，UI模式优先级最高，UI模式只能被触摸事件触发，保证高效。
+5. 一条线程的生命只能通过任务保住
+
+子线程里面设置定时器，可以看出子线程里面RunLoop需要自己开启，主线程则默认已经开启。直接用while(true)并不能实现触发事件效果。线程的声明需要通过任务保住，所以要将RunLoop开启。
+RunLoop是懒加载，只有第一次去拿才会创建。
+
+![](http://upload-images.jianshu.io/upload_images/548341-7e9fef8e702d4bc7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+
+
+## 参考文章
+[https://blog.ibireme.com/2015/05/18/runloop/](https://blog.ibireme.com/2015/05/18/runloop/)
+[深入理解RunLoop](https://blog.ibireme.com/2015/05/18/runloop/)
+[解密-神秘的 RunLoop](http://ios.jobbole.com/85635/)
+[（最全）RunLoop 原理+使用场景+面试总结](https://www.jianshu.com/p/ac05ac8428ac)
+
+## 学习视频
+   [Runloop视频](https://pan.baidu.com/s/1dG9n7O1) 密码：ztaf  
+   [Runloop培训视频](https://ke.qq.com/webcourse/index.html#course_id=229709&term_id=100271056&taid=1657780067074381&vid=q1422t1zu5j)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
