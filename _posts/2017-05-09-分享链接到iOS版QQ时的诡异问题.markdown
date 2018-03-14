@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "在不使用网线的mac上搭建IPv6测试环境"
+title:  "分享链接到iOS版QQ时的诡异问题"
 date:   2017-05-09 下午8:45
 categories: jekyll update
 ---
