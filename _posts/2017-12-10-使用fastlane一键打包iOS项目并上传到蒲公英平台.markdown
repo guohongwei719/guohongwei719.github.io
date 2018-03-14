@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "使用fastlane一键打包iOS项目并上传到蒲公英平台"
-date:   2017-05-05 下午8:41
+date:   2017-12-10 下午8:41
 categories: jekyll update
 ---
 
