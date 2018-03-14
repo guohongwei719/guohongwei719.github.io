@@ -1,0 +1,65 @@
+---
+layout: post
+title:  "在不使用网线的mac上搭建IPv6测试环境"
+date:   2017-05-09 下午8:45
+categories: jekyll update
+---
+
+
+## 引言
+
+今天QA提了一个bug，非常奇怪，暂时解决了，但是感觉还不是很完善，记录一下。
+
+## 现象
+分享链接到其他平台都是好的，但是就是分享到苹果手机上QQ时，发现打不开，如下图。
+![](http://upload-images.jianshu.io/upload_images/548341-05eb1154987472f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+## 调试
+
+发现分享出去的url为
+[http://m.elab-plus.com/sky-forest/index.html#/newyear?from=appshare&amp;token=95DFE93D110E74F08C6CE0142400CA67&amp;sharerImage=68d438fb-3159-4b3a-a1be-6e70a26007e6.jpg](http://m.elab-plus.com/sky-forest/index.html#/newyear?from=appshare&token=95DFE93D110E74F08C6CE0142400CA67&sharerImage=68d438fb-3159-4b3a-a1be-6e70a26007e6.jpg)
+但是在QQ中打开后的url变为
+[http://m.elab-plus.com/sky-forest/index.html&appinstall=0#/newyear?from=appshare&token=95DFE93D110E74F08C6CE0142400CA67&sharerImage=68d438fb-3159-4b3a-a1be-6e70a26007e6.jpg](http://m.elab-plus.com/sky-forest/index.html&appinstall=0#/newyear?from=appshare&token=95DFE93D110E74F08C6CE0142400CA67&sharerImage=68d438fb-3159-4b3a-a1be-6e70a26007e6.jpg)
+
+也就是说在QQ打开后，QQ在#之前加了 “appinstall=0”，所以这就打不开了。
+
+## 解决办法
+因为链接这边后端因为某些原因不方便改，因此尝试在客户端改，发现在 # 之前加上 ？则可以打开。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
