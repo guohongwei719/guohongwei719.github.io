@@ -12,9 +12,9 @@
 ## 专业技能
 
 * 熟练掌握 Objective-C, 熟悉 Swift 等开发语言，有两者混编经验。熟练使用 iOS SDK 及相关开发工具，掌握自定义控件及常用动画效果开发方法；
-* 熟悉iOS内存管理、GCD、Block、网络等相关技术，了解KVC&KVO、Runtime，Category 等技术底层原理；
+* 熟悉iOS内存管理、GCD、Block、网络等相关技术，了解 KVC&KVO、Runtime，Category 等技术底层原理；
 * 熟悉常用第三方框架，如 SDWebImage、AFNetworking 等；
-* 熟悉常用数据结构和算法，MVC/MVVM架构模式及常用编程思想(链式编程 && 响应式编程)；
+* 熟悉常用数据结构和算法，MVC/MVVM 架构模式及常用编程思想(链式编程 && 响应式编程)；
 * 掌握自动化打包和组件化相关技术；
 * 博客地址：[http://guohongwei719.github.io/](http://guohongwei719.github.io/)
 * GitHub：[https://github.com/guohongwei719](https://github.com/guohongwei719)
@@ -27,7 +27,7 @@
 
 ## 主要项目经历
 
-#### 安居客iOS客户端 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 安居客期间
+#### 安居客旗舰版APP &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 安居客期间
 **项目描述：**专业的找房APP，房产类APP中排名第一。用户可以在上面搜索二手房、新房、租房和商业地产等，了解最新房价和房产资讯，并可以直接和经纪人聊天。  
 **职责描述：** 核心开发人员  
 1. 负责二手房模块，包括列表页、详情页、搜索等。优化列表滑动效果，使用MVVM模式重构详情页；     
@@ -35,7 +35,7 @@
 &nbsp; &nbsp; GitHub地址：[https://github.com/guohongwei719/GHWPhotoBrowser/tree/1.0.1](https://github.com/guohongwei719/GHWPhotoBrowser/tree/1.0.1)    
 3. 城市选择页和3D Touch模块，重构筛选信息模块； 
 
-#### 安居生活iOS客户端 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 安居客期间
+#### 安居生活APP &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 安居客期间
 **项目描述：** 基于定位的小区生活服务APP，拥有兴趣组、上门、周边商户、外卖等板块，还是一个邻里交流的社交平台，可以查看附近的人，并且可以参加小区兴趣组的群聊以及发布话题。  
 **职责描述：** 核心开发人员    
 1. 负责登录模块，包括第三方登录，解决耦合问题，便于其他模块调用；  
@@ -62,9 +62,9 @@
 * 湖北工程学院第九届大学生“程序设计竞赛”一等奖
 * 国家励志奖学金和三好学生若干次
 
-## 兴趣爱好
+## 自我评价
 
-* 喜欢运动，擅长篮球、羽毛球、台球和唱歌等，对新技术感兴趣，喜欢挑战自己，喜欢玩各种APP，关注互联网行业发展趋势。
+* 喜欢运动，擅长篮球、羽毛球、台球和唱歌等，对新技术感兴趣，喜欢挑战自己，团队协作能力强，关注互联网行业发展趋势。
 
 
 
