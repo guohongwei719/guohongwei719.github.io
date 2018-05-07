@@ -1,0 +1,71 @@
+---
+layout: post
+title:  "Git 删除某个历史记录"
+date:   2018-04-20 下午8:13
+categories: jekyll update
+---
+
+我的历史提交记录是这样的，我要删除“首页侧边栏”这个提交记录。
+```
+commit b9110cd7106d22e1299b42337298b2d858ad5106 (HEAD -> zyzz_1.4.7)
+Author: 郭宏伟 <guohongwei719@guohongweideMacBook-Pro.local>
+Date:   Tue Apr 17 17:54:19 2018 +0800
+
+    增加视频推送转接
+
+commit f66dbf3f1f077bc39589e81b18cfdc8523deb676 (origin/zyzz_1.4.7)
+Author: 郭宏伟 <guohongwei719@guohongweideMacBook-Pro.local>
+Date:   Tue Apr 17 14:03:30 2018 +0800
+
+    Revert "分享问题" 回退到宁波项目修改之前
+    
+    This reverts commit 99e131493529c584b8e5b396b8546d6ac9b358b5.
+
+commit d6d25a470a49425283e263503c786ad458080e97
+Author: 郭宏伟 <guohongwei719@guohongweideMacBook-Pro.local>
+Date:   Wed Mar 21 15:28:02 2018 +0800
+
+    改为测试环境
+
+commit 20fd180378ab32cf867e9f87d5dac4a6f2963275
+Author: 郭宏伟 <guohongwei719@guohongweideMacBook-Pro.local>
+Date:   Wed Mar 21 14:00:56 2018 +0800
+
+    切到线上
+
+commit 127ebe8dbce7378d8d9cbd1daf83040b00b43a7a
+Author: 陈淑洋 <elab@elabs-MacBook-Pro.local>
+Date:   Thu Mar 15 11:48:35 2018 +0800
+
+    首页侧边栏
+
+commit d65f0fba23f2113ece6fbb3d104a33a1a8a80406
+Author: elab <elab@elabs-macbook-pro.local>
+Date:   Wed Mar 14 11:43:54 2018 +0800
+
+    3.14 11：43
+```
+
+步骤如下：
+1. 先找到要删除那次提交之前的提交记录，这里是d65f0fba23f2113ece6fbb3d104a33a1a8a80406；
+2. 执行如下命令
+
+```
+git rebase -i     d65f0fba23f2113ece6fbb3d104a33a1a8a80406
+```
+
+3. 出现如下界面，将“首页侧边栏”前面的pick改为drop即可
+![](https://upload-images.jianshu.io/upload_images/548341-efdbdea8466c9d33.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+4. wq，保存退出，可能还要解冲突，然后可以git log查看一下新的提交记录，如下图，搞定了。
+![](https://upload-images.jianshu.io/upload_images/548341-81047949294e3bde.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+
+
+
+
+
+
+
+
