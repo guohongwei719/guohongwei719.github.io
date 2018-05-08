@@ -13,10 +13,11 @@
 ## 专业技能
 
 * 熟练掌握 Objective-C, 熟悉 Swift 等开发语言，有两者混编经验。熟练使用 iOS SDK 及相关开发工具，掌握自定义控件及常用动画效果开发方法；
-* 熟悉iOS内存管理、GCD、Block、网络等相关技术，了解 KVC&KVO、Runtime，Category 等技术底层原理；
+* 熟悉iOS内存管理、GCD、Block、HTTPS等相关技术，了解 KVC&KVO、Runtime，Category、事件响应传递、APP签名等底层原理；
 * 熟悉常用第三方框架，如 SDWebImage、AFNetworking 等；
 * 熟悉常用数据结构和算法，MVC/MVVM 架构模式及常用编程思想(链式编程 && 响应式编程)；
 * 掌握自动化打包和组件化相关技术；
+* 熟练掌握 Cocoapods、Git等相关开发管理工具；
 * 博客地址：[http://guohongwei719.github.io/](http://guohongwei719.github.io/)
 * GitHub：[https://github.com/guohongwei719](https://github.com/guohongwei719)
 
@@ -65,7 +66,7 @@
 
 ## 自我评价
 
-* 喜欢运动，擅长羽毛球、台球和唱歌等；对新技术感兴趣，喜欢挑战自己，追求效率；脾气好，团队协作能力强，遇到问题能积极主动沟通；平时关注互联网行业发展趋势。
+* 喜欢运动，擅长羽毛球、台球和唱歌等；喜欢挑战自己，追求效率；脾气好，团队协作能力强，遇到问题能积极主动沟通；注重代码格式和质量，不给同事留坑。
 
 
 
